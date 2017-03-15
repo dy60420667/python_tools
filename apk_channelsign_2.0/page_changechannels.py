@@ -1,29 +1,42 @@
 # -*- coding: utf-8 -*-
 
-import sys,os
-from PyQt5.QtWidgets import QApplication, QWidget,QToolTip,QPushButton,QDesktopWidget,QLabel,QLineEdit,QTextEdit,QGridLayout,QFileDialog
-from PyQt5.QtGui import QIcon
+import os
+import sys
 import threading
+import time
 
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton,QDesktopWidget,QLabel,QLineEdit,QTextEdit,QGridLayout,QFileDialog,QVBoxLayout,QMessageBox
 
-import autosign_duoyouzuan
+import AutoSign
+import LogUtils
 
-class HomeView(QWidget):
+item_name = "APK Channels 1.0"
+
+class PageChangeChannels(QWidget):
+	logutil =""
+	autosign = ""
+	fileos_result = ""
+
 
 	def __init__(self): 
 		super().__init__()
-		# self.fileos_result = os.path.dirname(os.path.realpath(__file__)) + "\\result"
 		self.fileos_result = os.path.split(os.path.realpath(__file__))[0]
+		self.autosign = AutoSign.AutoSign()
+
+		self.logutil = LogUtils.LogUtils()
+		self.autosign.logUtil = self.logutil;
+		self.autosign.page_changechannels = self;
 		print("real local："+self.fileos_result);
 		self.initUI()
 
 	def initUI(self):
+
 		tips_apk = QLabel("选择apk")
 		tips_keystore  = QLabel("选择keystore")
 		tips_password  = QLabel("密码")
 		tips_password_2  = QLabel("别名")
 		tips_channels = QLabel("输入渠道")
-
 
 		self.btn_apk =  QPushButton("选择apk文件",self)
 		self.btn_keystore =  QPushButton("选择签名keystore文件",self)
@@ -31,11 +44,11 @@ class HomeView(QWidget):
 		self.ed_bieming =  QLineEdit('luori')
 		self.ed_channels =  QTextEdit('baidu')
 
-		self.btn = QPushButton('开始打包',self)
+		self.btn_ok = QPushButton('开始打包',self)
 
 		self.btn_apk.clicked.connect(self.btn_apk_Clicked)            
 		self.btn_keystore.clicked.connect(self.btn_keystore_Clicked)
-		self.btn.clicked.connect(self.btn_ok_Clicked)
+		self.btn_ok.clicked.connect(self.btn_ok_Clicked)
 
 		grid = QGridLayout()
 		grid.setSpacing(10)
@@ -55,14 +68,27 @@ class HomeView(QWidget):
 		grid.addWidget(tips_channels,5,0)
 		grid.addWidget(self.ed_channels,5,1,10,1)
 
-		grid.addWidget(self.btn,15,0)
+		gridBtn = QGridLayout()
+		gridBtn.setSpacing(10)
 
-		self.setLayout(grid)
+		gridBtn.addWidget(self.btn_ok, 1, 0)
+
+
+		vbox = QVBoxLayout()
+		vbox.addLayout(grid)
+		vbox.addLayout(gridBtn)
+		# vbox.addWidget(grid)
+		# vbox.addWidget(self.btn_ok)
+
+		# grid.addWidget(self.btn,15,0)
+		# self.setLayout(grid)
+		self.setLayout(vbox)
+
 		self.resize(250,150)
 		self.setMinimumSize(266, 354); 
 		self.setMaximumSize(266, 354);
 		self.center()
-		self.setWindowTitle('AutoSign 1.0')
+		self.setWindowTitle(item_name)
 		self.setWindowIcon(QIcon('icon/icon.ico'))
 		self.show()
 
@@ -83,32 +109,33 @@ class HomeView(QWidget):
 		self.btn_keystore.setText(filename)
 
 	def btn_ok_Clicked(self):
-		filename_apk = self.btn_apk.text()
-		filename_keystore = self.btn_keystore.text()
-		password = self.ed_password.text()
-		bieming = self.ed_bieming.text()
-		text_channels = self.ed_channels.toPlainText().split("\n")
+		if  self.logutil.itemIsLoading():
+			return;
+		else:
+			self.autosign.filename_apk = self.btn_apk.text()
+			self.autosign.filename_keystore = self.btn_keystore.text()
+			self.autosign.filename_result = self.fileos_result + "\\result"
+			self.autosign.keystore_password = self.ed_password.text().strip()
+			self.autosign.keystore_bieming = self.ed_bieming.text().strip()
+			self.autosign.text_channels = self.ed_channels.toPlainText().split("\n")
+			self.autosign.real_path = self.fileos_result
 
-		autosign_duoyouzuan.filename_apk = filename_apk
-		autosign_duoyouzuan.filename_keystore = filename_keystore
-		autosign_duoyouzuan.filename_result = self.fileos_result+"\\result"
-		autosign_duoyouzuan.keystore_password = password.strip()
-		autosign_duoyouzuan.keystore_bieming = bieming.strip()
-		autosign_duoyouzuan.text_channels = text_channels
-		autosign_duoyouzuan.real_path = self.fileos_result
+			self.t1 = threading.Thread(target=self.autosign.autoSign())
+			self.t1.setDaemon(True)
+			self.t1.start()
 
-		# autosign_duoyouzuan.initItem
-
-		threads = []
-		t1 = threading.Thread(target=autosign_duoyouzuan.initItem)
-		t1.setDaemon(True)
-		t1.start()
+	def showTipsDialog(self,text):
+		try:
+			QMessageBox.about(self,"提示", text).show()
+		except Exception as e:
+			print(e)
 
 
-		print(autosign_duoyouzuan.text_channels)
+
+
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	hv = HomeView()
+	hv = PageChangeChannels()
 	sys.exit(app.exec_())
 
