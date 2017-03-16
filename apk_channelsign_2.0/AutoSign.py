@@ -69,6 +69,13 @@ class AutoSign():
 		print('签名结果:',self.logUtil.getLogItems())
 		print('签名成功')
 
+	def copyAndChangeTheApp(self):
+		print("创建old文件夹")
+		os.makedirs(self.filename_result+"\\old\\")
+		shutil.copy(self.filename_apk, self.filename_result+"\\old\\app.apk")
+		self.filename_apk = self.filename_result+"\\old\\app.apk";
+
+
 	def initItem(self):
 		#删除appresult文件夹
 		print('清除appresult文件夹:'+self.filename_result)
@@ -77,6 +84,8 @@ class AutoSign():
 		#创建appresult文件夹
 		print('创建appresult文件夹')
 		os.makedirs(self.filename_result)
+
+		self.copyAndChangeTheApp();
 
 		print(self.text_channels)
 

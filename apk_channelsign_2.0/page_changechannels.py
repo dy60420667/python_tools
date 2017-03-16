@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton,QDesktopWidget,QL
 import AutoSign
 import LogUtils
 
-item_name = "APK Channels 1.0"
+item_name = "APK Channels 2.0"
 
 class PageChangeChannels(QWidget):
 	logutil =""
@@ -129,10 +129,6 @@ class PageChangeChannels(QWidget):
 			QMessageBox.about(self,"提示", text).show()
 		except Exception as e:
 			print(e)
-
-
-
-
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
