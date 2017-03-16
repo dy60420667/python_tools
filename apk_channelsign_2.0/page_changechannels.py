@@ -16,18 +16,18 @@ item_name = "APK Channels 2.0"
 class PageChangeChannels(QWidget):
 	logutil =""
 	autosign = ""
-	fileos_result = ""
+	current_file_dictory = ""
 
 
 	def __init__(self): 
 		super().__init__()
-		self.fileos_result = os.path.split(os.path.realpath(__file__))[0]
+		self.current_file_dictory = os.path.split(os.path.realpath(__file__))[0]
 		self.autosign = AutoSign.AutoSign()
 
 		self.logutil = LogUtils.LogUtils()
 		self.autosign.logUtil = self.logutil;
 		self.autosign.page_changechannels = self;
-		print("real local："+self.fileos_result);
+		print("real local："+self.current_file_dictory);
 		self.initUI()
 
 	def initUI(self):
@@ -114,11 +114,11 @@ class PageChangeChannels(QWidget):
 		else:
 			self.autosign.filename_apk = self.btn_apk.text()
 			self.autosign.filename_keystore = self.btn_keystore.text()
-			self.autosign.filename_result = self.fileos_result + "\\result"
+			self.autosign.filename_result = self.current_file_dictory + "\\result"
 			self.autosign.keystore_password = self.ed_password.text().strip()
 			self.autosign.keystore_bieming = self.ed_bieming.text().strip()
 			self.autosign.text_channels = self.ed_channels.toPlainText().split("\n")
-			self.autosign.real_path = self.fileos_result
+			self.autosign.real_path = self.current_file_dictory
 
 			self.t1 = threading.Thread(target=self.autosign.autoSign())
 			self.t1.setDaemon(True)

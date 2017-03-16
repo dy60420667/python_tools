@@ -1,4 +1,5 @@
-import  time
+#日志管理类
+
 class LogUtils():
     log_items = [];
     log_result = 0;
