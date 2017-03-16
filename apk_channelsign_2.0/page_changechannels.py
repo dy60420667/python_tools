@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton,QDesktopWidget,QL
 
 import AutoSign
 import LogUtils
+import CacheUtils
 
 item_name = "APK Channels 2.0"
 
@@ -17,12 +18,16 @@ class PageChangeChannels(QWidget):
 	logutil =""
 	autosign = ""
 	current_file_dictory = ""
+	cacheUtils = ''
 
 
 	def __init__(self): 
 		super().__init__()
 		self.current_file_dictory = os.path.split(os.path.realpath(__file__))[0]
 		self.autosign = AutoSign.AutoSign()
+
+		self.cacheUtils = CacheUtils.CacheUtils()
+		self.cacheUtils.init(self.current_file_dictory)
 
 		self.logutil = LogUtils.LogUtils()
 		self.autosign.logUtil = self.logutil;
@@ -99,14 +104,18 @@ class PageChangeChannels(QWidget):
 		self.move(qr.topLeft())
 
 	def btn_apk_Clicked(self):
-		filename,_ = QFileDialog.getOpenFileName(self);
+		apk_file  = self.cacheUtils.getCacheString('apk_file',self.current_file_dictory)
+		filename,_ = QFileDialog.getOpenFileName(self,apk_file);
 		# text=open(filename,'r').read()
 		self.btn_apk.setText(filename)
+		self.cacheUtils.setCacheString('apk_file', filename)
 
 	def btn_keystore_Clicked(self):
-		filename,_ = QFileDialog.getOpenFileName(self);
+		key_store = self.cacheUtils.getCacheString('key_store',self.current_file_dictory)
+		filename,_ = QFileDialog.getOpenFileName(self,key_store);
 		# text=open(filename,'r').read()
 		self.btn_keystore.setText(filename)
+		self.cacheUtils.setCacheString('key_store', filename)
 
 	def btn_ok_Clicked(self):
 		if  self.logutil.itemIsLoading():
