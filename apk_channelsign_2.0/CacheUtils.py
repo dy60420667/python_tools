@@ -17,17 +17,25 @@ class CacheUtils():
             os.makedirs(self.cache_file_dictory)
 
     def setCacheString(self,key,text):
-        key_file = self.cache_file_dictory+"\\key.txt"
-        f = open(key_file,'w')
+        print("写入文件：", text)
+        key_file = self.cache_file_dictory+"\\"+key+".txt"
+        f = open(key_file,'w+')
         f.write(text)
         f.close()
 
     def getCacheString(self,key,defaultValue):
-        key_file = self.cache_file_dictory + "\\key.txt"
-        f = open(key_file, 'r')
-        value = f.read()
-        f.close()
-        if not value:
-            return value;
+        key_file = self.cache_file_dictory + "\\"+key+".txt"
+        print("获取文件：",key_file)
+        if not os.path.exists(key_file):
+            print('文件不存在，返回默认值',defaultValue)
+            return defaultValue
         else:
-            return defaultValue;
+            f = open(key_file, 'r')
+            value = f.read()
+            f.close()
+            if value:
+                print('获取结果',value)
+                return value;
+            else:
+                print('结果不存在',defaultValue)
+                return defaultValue;
