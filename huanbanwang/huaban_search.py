@@ -1,12 +1,9 @@
-import re
-import os
-import requests
-import time
+import re,os,requests,time
  
 global PhotoNum
 page_count=0
 PhotoNum = 0
-PWD="D:/work/python/pic/huaban/renxiangsheying/"
+PWD="D:/work/python/pic/huaban/jianmei/"
 head = {'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
 TimeOut = 30
  
@@ -15,7 +12,7 @@ TimeOut = 30
 url_image = "http://hbimg.b0.upaiyun.com/"
 
 
-urlNext = "http://huaban.com/search/?q=人像摄影&per_page=20&wfl=1&page="
+urlNext = "http://huaban.com/search/?q=健美&per_page=20&wfl=1&page="
  
  
 def downfile(file,url):
@@ -55,7 +52,7 @@ def requestUrl(url):
       x_key = item[1]
       x_like_count = int(item[2])
       x_repin_count = int(item[3])
-      if (x_repin_count >10 and x_like_count > 10) or x_repin_count >100 or x_like_count > 20:
+      if (x_repin_count >10 and x_like_count > 10) or x_repin_count >10 or x_like_count > 1:
         print("开始下载第{0}张图片".format(PhotoNum))
         url_item = url_image+x_key
         filename = PWD+str(max_pin_id)+".jpg"
